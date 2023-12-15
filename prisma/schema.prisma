@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,63 +7,93 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int        @id @default(autoincrement())
-  username  String
-  password  String
-  email     String     @unique
-  createdAt DateTime   @default(now())
-  roles     UserRole[]
-  projects  Project[]
-  tasks     Task[]
-  comments  Comment[]
-}
-
 model Role {
-  id    Int        @id @default(autoincrement())
-  name  String
-  users UserRole[]
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar()
+
+  Permission Permission[]
+  User       User[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt()
+  deleted_at DateTime? @db.Timestamp()
+
+  @@map("roles")
 }
 
-model UserRole {
-  userId Int
-  roleId Int
-  user   User @relation(fields: [userId], references: [id])
-  role   Role @relation(fields: [roleId], references: [id])
+model Permission {
+  id         Int     @id @default(autoincrement())
+  role       Role    @relation(fields: [role_id], references: [id])
+  role_id    Int     @db.Integer()
+  action     String  @db.VarChar()
+  subject    String  @db.VarChar()
+  inverted   Boolean @default(false)
+  conditions Json?   @db.JsonB()
+  reason     String? @db.Text()
 
-  @@id([userId, roleId])
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt()
+  deleted_at DateTime? @db.Timestamp()
+
+  @@map("permissions")
 }
 
-model Project {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  ownerId     Int
-  owner       User     @relation(fields: [ownerId], references: [id])
-  tasks       Task[]
+model User {
+  id          Int        @id @default(autoincrement())
+  username    String     @unique @db.VarChar(255)
+  email       String     @unique @db.VarChar(255)
+  role        Role       @relation(fields: [role_id], references: [id])
+  role_id     Int        @db.Integer()
+  Workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId Int?
+
+  assigned_cards Card[]
+
+  @@map("users")
 }
 
-model Task {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String?
-  status      String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  projectId   Int
-  assigneeId  Int
-  project     Project   @relation(fields: [projectId], references: [id])
-  assignee    User      @relation(fields: [assigneeId], references: [id])
-  comments    Comment[]
+model Workspace {
+  id     Int     @id @default(autoincrement())
+  slug   String  @db.VarChar(255)
+  name   String  @unique @db.VarChar(255)
+  detail String? @db.Text()
+
+  users  User[]
+  boards Board[]
+
+  @@map("workspaces")
 }
 
-model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  taskId    Int
-  userId    Int
-  task      Task     @relation(fields: [taskId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+model Board {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(255)
+  slug         String    @db.VarChar(255)
+  description  String?   @db.Text()
+  workspace    Workspace @relation(fields: [workspace_id], references: [id])
+  workspace_id Int       @db.Integer()
+  lists        List[]
+
+  @@map("boards")
+}
+
+model List {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  board    Board  @relation(fields: [board_id], references: [id])
+  board_id Int    @db.Integer()
+  cards    Card[]
+
+  @@map("lists")
+}
+
+model Card {
+  id             Int     @id @default(autoincrement())
+  name           String  @db.VarChar(255)
+  description    String? @db.Text()
+  list           List    @relation(fields: [list_id], references: [id])
+  list_id        Int     @db.Integer()
+  assigned_to    User?   @relation(fields: [assigned_to_id], references: [id])
+  assigned_to_id Int?
+
+  @@map("cards")
 }
