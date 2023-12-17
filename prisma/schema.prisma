@@ -14,47 +14,40 @@ model Role {
   Permission Permission[]
   User       User[]
 
-  created_at DateTime  @default(now())
-  updated_at DateTime? @updatedAt()
-  deleted_at DateTime? @db.Timestamp()
-
   @@map("roles")
 }
 
 model Permission {
   id         Int     @id @default(autoincrement())
-  role       Role    @relation(fields: [role_id], references: [id])
-  role_id    Int     @db.Integer()
+  role       Role?   @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  roleId     Int?    @map("role_id") @db.Integer()
   action     String  @db.VarChar()
   subject    String  @db.VarChar()
-  inverted   Boolean @default(false)
+  inverted   Boolean? @default(false)
   conditions Json?   @db.JsonB()
   reason     String? @db.Text()
-
-  created_at DateTime  @default(now())
-  updated_at DateTime? @updatedAt()
-  deleted_at DateTime? @db.Timestamp()
 
   @@map("permissions")
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  username    String     @unique @db.VarChar(255)
-  email       String     @unique @db.VarChar(255)
-  role        Role       @relation(fields: [role_id], references: [id])
-  role_id     Int        @db.Integer()
-  Workspace   Workspace? @relation(fields: [workspaceId], references: [id])
-  workspaceId Int?
-
-  assigned_cards Card[]
+  id            Int        @id @default(autoincrement())
+  username      String     @unique @db.VarChar(255)
+  email         String     @unique @db.VarChar(255)
+  role          Role       @relation(fields: [roleId], references: [id], onDelete: SetDefault)
+  roleId        Int        @map("role_id") @db.Integer()
+  workspace     Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+  workspaceId   Int?       @map("workspace_id") @db.Integer()
+  password      String     @db.VarChar(255)
+  avatar        String?    @db.VarChar(255)
+  assignedCards Card[]
 
   @@map("users")
 }
 
 model Workspace {
   id     Int     @id @default(autoincrement())
-  slug   String  @db.VarChar(255)
+  slug   String  @unique @db.VarChar(255)
   name   String  @unique @db.VarChar(255)
   detail String? @db.Text()
 
@@ -65,35 +58,37 @@ model Workspace {
 }
 
 model Board {
-  id           Int       @id @default(autoincrement())
-  name         String    @db.VarChar(255)
-  slug         String    @db.VarChar(255)
-  description  String?   @db.Text()
-  workspace    Workspace @relation(fields: [workspace_id], references: [id])
-  workspace_id Int       @db.Integer()
-  lists        List[]
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  slug        String    @db.VarChar(255)
+  description String?   @db.Text()
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId Int       @map("workspace_id") @db.Integer()
+  lists       List[]
 
   @@map("boards")
 }
 
 model List {
-  id       Int    @id @default(autoincrement())
-  name     String @db.VarChar(255)
-  board    Board  @relation(fields: [board_id], references: [id])
-  board_id Int    @db.Integer()
-  cards    Card[]
+  id      Int    @id @default(autoincrement())
+  name    String @db.VarChar(255)
+  order   Int    @default(1) @db.Integer()
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId Int    @map("board_id") @db.Integer()
+  cards   Card[]
 
   @@map("lists")
 }
 
 model Card {
-  id             Int     @id @default(autoincrement())
-  name           String  @db.VarChar(255)
-  description    String? @db.Text()
-  list           List    @relation(fields: [list_id], references: [id])
-  list_id        Int     @db.Integer()
-  assigned_to    User?   @relation(fields: [assigned_to_id], references: [id])
-  assigned_to_id Int?
+  id           Int     @id @default(autoincrement())
+  name         String  @db.VarChar(255)
+  order        Int     @default(1) @db.Integer()
+  description  String? @db.Text()
+  list         List    @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId       Int     @db.Integer()
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedToId Int?    @map("assigned_to_id") @db.Integer()
 
   @@map("cards")
 }
