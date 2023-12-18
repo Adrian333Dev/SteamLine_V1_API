@@ -20,7 +20,7 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { PrismaService } from '@/modules/prisma';
+import { PrismaService } from '@modules/prisma';
 import { CHECK_ABILITY, RequiredRule } from '../decorators';
 import { Request } from 'express';
 
@@ -32,7 +32,6 @@ export const actions = [
   'delete',
 ] as const;
 
-// export const subjects = ['Story', 'User', 'all'] as const;
 export const subjects = [
   'User',
   'Workspace',
