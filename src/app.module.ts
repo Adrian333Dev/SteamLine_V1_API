@@ -12,7 +12,6 @@ import { UserModule } from "@/resources/user/user.module";
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), "src/schema.gql"),
       buildSchemaOptions: { numberScalarMode: "integer" },
-      sortSchema: true,
     }),
     PrismaModule,
     UserModule,

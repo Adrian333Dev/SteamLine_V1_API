@@ -20,20 +20,20 @@ export class UserResolver implements Resource<User> {
     return this.userService.get(id);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { name: "createUser" })
   create(@Args("data") data: CreateUserInput) {
     return this.userService.create(data);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { name: "updateUser" })
   update(
     @Args("id", { type: () => ID }, ParseIntPipe) id: number,
-    @Args("data") data: UpdateUserInput,
+    @Args("data") data: UpdateUserInput
   ) {
     return this.userService.update(id, data);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { name: "deleteUser" })
   delete(@Args("id", { type: () => ID }, ParseIntPipe) id: number) {
     return this.userService.delete(id);
   }
