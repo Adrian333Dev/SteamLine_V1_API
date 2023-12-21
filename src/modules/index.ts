@@ -1,1 +1,1 @@
-export * from './prisma';
+export { PrismaModule } from './prisma/prisma.module';

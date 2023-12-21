@@ -1,9 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "@/modules/prisma";
-import { CreateUserInput, UpdateUserInput } from "./dto";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@/modules/prisma';
+import { User } from '@prisma/client';
+
+import { CreateUserInput, UpdateUserInput } from './user.inputs';
+import { IBaseResourceService } from '@/common/interfaces';
 
 @Injectable()
-export class UserService {
+export class UserService
+  implements IBaseResourceService<User, CreateUserInput, UpdateUserInput>
+{
   constructor(private readonly prismaService: PrismaService) {}
 
   list() {

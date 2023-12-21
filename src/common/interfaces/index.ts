@@ -1,1 +1,1 @@
-export * from './resource.interface';
+export * from './base-resource.interface';
