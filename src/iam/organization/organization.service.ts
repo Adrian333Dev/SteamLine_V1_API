@@ -1,11 +1,9 @@
 import { IBaseResourceService } from '@/common/interfaces';
-import { PrismaService } from '@/modules/prisma';
 import { Injectable } from '@nestjs/common';
 import { Organization } from '@prisma/client';
-import {
-  CreateOrganizationInput,
-  UpdateOrganizationInput,
-} from './organization.inputs';
+
+import { PrismaService } from '@/modules/prisma';
+import { CreateOrganizationInput, UpdateOrganizationInput } from './dto';
 
 @Injectable()
 export class OrganizationService

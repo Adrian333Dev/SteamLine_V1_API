@@ -3,7 +3,7 @@ import { ParseIntPipe } from '@nestjs/common';
 
 import { UserService } from './user.service';
 import { User } from './user.entities';
-import { CreateUserInput, UpdateUserInput } from './user.inputs';
+import { CreateUserInput, UpdateUserInput } from './dto';
 import { IBaseResourceResolver } from '@/common/interfaces';
 
 @Resolver(() => User)

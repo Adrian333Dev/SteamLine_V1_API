@@ -4,8 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 
 import { PrismaModule } from '@/modules';
-import { UserModule, OrganizationModule } from '@/resources';
-import { CommonModule } from './common/common.module';
+import { IamModule } from '@/iam/iam.module';
 
 @Module({
   imports: [
@@ -15,9 +14,7 @@ import { CommonModule } from './common/common.module';
       buildSchemaOptions: { numberScalarMode: 'integer' },
     }),
     PrismaModule,
-    UserModule,
-    OrganizationModule,
-    CommonModule,
+    IamModule,
   ],
   controllers: [],
   providers: [],

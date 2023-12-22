@@ -1,4 +1,4 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Prisma } from '@prisma/client';
 import {
   IsNotEmpty,
@@ -34,6 +34,3 @@ export class CreateUserInput implements Prisma.UserCreateInput {
   })
   password: string;
 }
-
-@InputType()
-export class UpdateUserInput extends PartialType(CreateUserInput) {}
