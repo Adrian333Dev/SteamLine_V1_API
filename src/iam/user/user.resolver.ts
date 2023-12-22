@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { ParseIntPipe } from '@nestjs/common';
 
 import { UserService } from './user.service';
-import { User } from './user.entities';
+import { User } from './entities';
 import { CreateUserInput, UpdateUserInput } from './dto';
 import { IBaseResourceResolver } from '@/common/interfaces';
 

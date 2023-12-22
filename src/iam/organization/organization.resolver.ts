@@ -1,8 +1,8 @@
 import { Resolver } from '@nestjs/graphql';
 import { OrganizationService } from './organization.service';
-import { Organization } from './organization.entities';
 import { IBaseResourceResolver } from '@/common/interfaces';
 import { CreateOrganizationInput, UpdateOrganizationInput } from './dto';
+import { Organization } from './entities';
 
 @Resolver(() => Organization)
 export class OrganizationResolver
