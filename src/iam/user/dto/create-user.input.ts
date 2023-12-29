@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 import { Prisma } from '@prisma/client';
 import {
   IsNotEmpty,
@@ -11,19 +11,16 @@ import {
 
 @InputType()
 export class CreateUserInput implements Prisma.UserCreateInput {
-  @Field()
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @Field()
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(20)
   username: string;
 
-  @Field()
   @IsNotEmpty()
   @IsString()
   @MinLength(8)

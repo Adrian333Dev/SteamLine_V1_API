@@ -4,7 +4,15 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "plugins": ["@nestjs/graphql"]
+    "plugins": [
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "typeFileNameSuffix": [".input.ts", ".output.ts", ".entity.ts"],
+          "introspectComments": true
+        }
+      }
+    ]
   },
   "generateOptions": {
     "spec": false

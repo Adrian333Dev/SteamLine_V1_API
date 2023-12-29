@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { User } from './entities';
 import { CreateUserInput, UpdateUserInput } from './dto';
 import { IBaseResourceResolver } from '@/common/interfaces';
+import { AuthOutput } from '@/common/dto';
 
 @Resolver(() => User)
 export class UserResolver
@@ -22,7 +23,7 @@ export class UserResolver
     return this.userService.get(id);
   }
 
-  @Mutation(() => User, { name: 'createUser' })
+  @Mutation(() => AuthOutput, { name: 'createUser' })
   create(@Args('data') data: CreateUserInput) {
     return this.userService.create(data);
   }
