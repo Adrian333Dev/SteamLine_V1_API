@@ -15,7 +15,7 @@ export class UserService
     return this.prismaService.user.findMany();
   }
 
-  get(id: number) {
+  get(id: string) {
     return this.prismaService.user.findUniqueOrThrow({ where: { id } });
   }
 
@@ -23,11 +23,11 @@ export class UserService
     return this.prismaService.user.create({ data });
   }
 
-  update(id: number, data: UpdateUserInput) {
+  update(id: string, data: UpdateUserInput) {
     return this.prismaService.user.update({ where: { id }, data });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prismaService.user.delete({ where: { id } });
   }
 }

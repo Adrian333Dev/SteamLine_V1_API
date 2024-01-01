@@ -4,10 +4,9 @@ import { User as IUser } from '@prisma/client';
 @ObjectType()
 export class User implements IUser {
   @Field(() => ID)
-  id: number;
+  id: string;
   email: string;
   username: string;
   password: string;
-  createdAt: Date;
-  lastLogin: Date | null;
+  refreshToken: string;
 }
