@@ -14,6 +14,8 @@ model User {
   id           String  @id @default(uuid())
   email        String  @unique
   username     String  @unique
-  password     String
+  password     String  @map("hashed_password")
   refreshToken String? @map("refresh_token")
+
+  @@map("users")
 }

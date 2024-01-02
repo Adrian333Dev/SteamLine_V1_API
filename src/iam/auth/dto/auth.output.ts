@@ -1,18 +1,11 @@
-import { User } from '@/iam/user/entities';
 import { ObjectType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
+import { UserOutput } from './user.output';
+import { TokensOutput } from './tokens.output';
 
 @ObjectType()
-export class AuthOutput {
+export class AuthOutput extends TokensOutput {
   @IsNotEmpty()
-  @IsString()
-  accessToken: string;
-
-  @IsNotEmpty()
-  @IsString()
-  refreshToken: string;
-
-  @IsNotEmpty()
-  user: Omit<User, 'password'>;
+  user: UserOutput;
 }

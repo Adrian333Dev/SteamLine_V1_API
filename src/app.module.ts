@@ -1,11 +1,13 @@
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 
 import { PrismaModule } from '@/modules';
 import { IamModule } from '@/iam/iam.module';
+import { AccessTokenGuard } from './iam/auth/guards';
 
 @Module({
   imports: [
@@ -19,6 +21,6 @@ import { IamModule } from '@/iam/iam.module';
     IamModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [{ provide: APP_GUARD, useClass: AccessTokenGuard }],
 })
 export class AppModule {}
