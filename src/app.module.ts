@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { LoggerModule } from 'nestjs-pino';
 
 import { PrismaModule, IamModule } from '@/modules';
 import { AccessTokenGuard } from '@/modules/iam/auth/guards';
@@ -18,6 +19,19 @@ import { AccessTokenGuard } from '@/modules/iam/auth/guards';
     }),
     PrismaModule,
     IamModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        customProps: (req, res) => ({
+          context: 'HTTP',
+        }),
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            singleLine: true,
+          },
+        },
+      },
+    }),
   ],
   controllers: [],
   providers: [{ provide: APP_GUARD, useClass: AccessTokenGuard }],
