@@ -11,24 +11,11 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  username  String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  lastLogin DateTime?
+  id           String  @id @default(uuid())
+  email        String  @unique
+  username     String  @unique
+  password     String  @map("hashed_password")
+  refreshToken String? @map("refresh_token")
 
-  // Relationships
-  organizations Organization[]
-}
-
-model Organization {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-
-  // Relationships
-  createdBy   User @relation(fields: [createdById], references: [id])
-  createdById Int  @map("created_by")
+  @@map("users")
 }
