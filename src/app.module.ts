@@ -5,9 +5,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 
-import { PrismaModule } from '@/modules';
-import { IamModule } from '@/iam/iam.module';
-import { AccessTokenGuard } from './iam/auth/guards';
+import { PrismaModule, IamModule } from '@/modules';
+import { AccessTokenGuard } from '@/modules/iam/auth/guards';
 
 @Module({
   imports: [
