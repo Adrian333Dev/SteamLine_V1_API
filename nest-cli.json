@@ -3,18 +3,6 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true,
-    "plugins": [
-      {
-        "name": "@nestjs/graphql",
-        "options": {
-          "typeFileNameSuffix": [".input.ts", ".output.ts", ".entity.ts"],
-          "introspectComments": true
-        }
-      }
-    ]
-  },
-  "generateOptions": {
-    "spec": false
+    "deleteOutDir": true
   }
 }
