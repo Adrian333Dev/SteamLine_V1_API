@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './resources/user/user.module';
+import { PrismaModule } from 'nestjs-prisma';
+
+import { IdentityAccessManagementModule } from '/iam';
+import { CommonModule } from '/common';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017', {
-      dbName: 'steam_line_db',
+    PrismaModule.forRoot({
+      isGlobal: true,
     }),
-    ,
-    UserModule,
+    CommonModule,
+    IdentityAccessManagementModule,
   ],
 })
 export class AppModule {}
