@@ -3,17 +3,18 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
 
-import { PrismaService } from '/common/prisma';
 import { PG_UNIQUE_CONSTRAINT_VIOLATION } from '/common/constants';
 import { HashingService } from '../hashing';
 import { SignInDto, SignUpDto } from './dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
-    private readonly prismaService: PrismaService,
     private readonly hashingService: HashingService,
+    private readonly userService: UserService,
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
@@ -28,10 +29,11 @@ export class AuthenticationService {
           password: hashedPassword,
         },
       });
-
     } catch (error) {
       if (error.code === PG_UNIQUE_CONSTRAINT_VIOLATION)
-        throw new ConflictException('User with those credentials already exists');
+        throw new ConflictException(
+          'User with those credentials already exists',
+        );
       throw error;
     }
   }
