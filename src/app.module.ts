@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from 'nestjs-prisma';
 
 import { IdentityAccessManagementModule } from '/iam';
@@ -6,9 +7,8 @@ import { CommonModule } from '/common';
 
 @Module({
   imports: [
-    PrismaModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({}),
+    PrismaModule.forRoot({ isGlobal: true }),
     CommonModule,
     IdentityAccessManagementModule,
   ],

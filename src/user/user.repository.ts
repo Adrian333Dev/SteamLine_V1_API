@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
-import { ICRUD } from '/common/interfaces';
+
+type TCreateParams = Prisma.UserCreateInput;
 
 @Injectable()
-export class UserRepository implements ICRUD<User> {
+export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
   async create(params: { data: Prisma.UserCreateInput }): Promise<User> {
