@@ -17,4 +17,6 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
   is_active Boolean  @default(true) @map("is_active")
+
+  refreshToken String? @map("refresh_token")
 }
