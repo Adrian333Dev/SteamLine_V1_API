@@ -15,7 +15,7 @@ type Keys<T extends Entity> = Extract<
  * async findById(id: string) {
  *  return this.prisma.user.findUnique({
  *   where: { id },
- *  select: prismaExclude('user', ['password']),
+ *  select: prismaExclude('User', ['password']),
  *  });
  * }
  */

@@ -8,10 +8,6 @@ export interface IListUserParams {
   orderBy?: Prisma.UserOrderByWithRelationInput;
 }
 
-export interface IGetUserParams {
-  where: Prisma.UserWhereUniqueInput;
-}
-
 export interface ICreateUserParams {
   data: Prisma.UserCreateInput;
 }

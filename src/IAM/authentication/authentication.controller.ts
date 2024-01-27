@@ -13,12 +13,12 @@ import { RefreshTokensInput, SignInInput, SignUpInput } from './dto';
 import { Response } from 'express';
 import { Auth } from './decorators';
 import { AuthType } from './enums';
-import { ITokens } from './interfaces';
 
 @Auth(AuthType.None)
 @Controller('auth')
 export class AuthenticationController {
   private readonly logger = new Logger(AuthenticationController.name);
+
   constructor(private readonly authService: AuthenticationService) {}
 
   @Post('sign-up')
@@ -45,15 +45,15 @@ export class AuthenticationController {
     // await this.setTokensToCookie(res, tokens);
   }
 
-  private async setCookie(res: Response, key: string, value: string) {
-    res.cookie(key, value, { secure: true, httpOnly: true, sameSite: true });
-  }
+  // private async setCookie(res: Response, key: string, value: string) {
+  //   res.cookie(key, value, { secure: true, httpOnly: true, sameSite: true });
+  // }
 
-  private async setTokensToCookie(
-    res: Response,
-    { accessToken, refreshToken }: ITokens,
-  ) {
-    await this.setCookie(res, 'accessToken', accessToken);
-    await this.setCookie(res, 'refreshToken', refreshToken);
-  }
+  // private async setTokensToCookie(
+  //   res: Response,
+  //   { accessToken, refreshToken }: ITokens,
+  // ) {
+  //   await this.setCookie(res, 'accessToken', accessToken);
+  //   await this.setCookie(res, 'refreshToken', refreshToken);
+  // }
 }

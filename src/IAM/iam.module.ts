@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 
 import { hashingServiceProvider } from './hashing';
 import { jwtConfig } from './config';
-import { UserRepository } from '/user/user.repository';
 import {
   AuthenticationService,
   AuthenticationController,
@@ -15,11 +14,10 @@ import { AccessTokenGuard, authGuardProvider } from './authentication/guards';
 @Module({
   providers: [
     hashingServiceProvider,
-    UserRepository,
+    authGuardProvider,
     AuthenticationService,
     RefreshTokenIdsStorage,
     AccessTokenGuard,
-    authGuardProvider,
   ],
   imports: [
     JwtModule.registerAsync(jwtConfig.asProvider()),

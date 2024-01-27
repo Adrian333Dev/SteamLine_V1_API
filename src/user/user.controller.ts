@@ -1,50 +1,60 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ICRUD } from '/common/generics';
-import { User } from '@prisma/client';
-import {
-  ICreateUserParams,
-  IUpdateUserParams,
-  IDeleteUserParams,
-  IListUserParams,
-} from './interfaces';
+import { Prisma, User } from '@prisma/client';
+import { IUpdateUserParams, IUserResponse } from './interfaces';
+import { ActiveUser } from '/iam/decorators';
+import { ID } from '/common/types';
 
-@Controller('user')
-export class UserController implements ICRUD<User> {
+@Controller('users')
+export class UserController {
+  private readonly logger = new Logger(UserController.name);
+
   constructor(private readonly userService: UserService) {}
 
-  // Mutation
   @Post()
-  async create(params: ICreateUserParams): Promise<User> {
+  async create(@Body() params: Prisma.UserCreateInput): Promise<IUserResponse> {
     return this.userService.create(params);
   }
 
-  @Patch()
-  async update(params: IUpdateUserParams): Promise<User | null> {
-    return this.userService.update(params);
+  @Get('list')
+  async list(): Promise<IUserResponse[]> {
+    return this.userService.list();
   }
 
-  @Delete()
-  async delete(params: IDeleteUserParams): Promise<User | null> {
-    return this.userService.delete(params);
+  @Get('get/:id')
+  async get(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<IUserResponse | null> {
+    return this.userService.get({ id });
   }
 
-  // Query
-  @Get()
-  async list(params: IListUserParams): Promise<User[]> {
-    return this.userService.list(params);
+  @Get('me')
+  async getProfile(@ActiveUser('sub') id: ID): Promise<IUserResponse | null> {
+    return this.userService.get({ id });
   }
 
-  @Get(':id')
-  async get(@Param('id', ParseIntPipe) id: number): Promise<User | null> {
-    return this.userService.get({ where: { id } });
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: Prisma.UserUpdateInput,
+  ): Promise<IUserResponse | null> {
+    return this.userService.update({ where: { id }, data });
+  }
+
+  @Delete(':id')
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<IUserResponse | null> {
+    return this.userService.delete({ id });
   }
 }

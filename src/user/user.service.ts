@@ -1,44 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
-import {
-  IListUserParams,
-  ICreateUserParams,
-  IUpdateUserParams,
-  IDeleteUserParams,
-  IGetUserParams,
-} from './interfaces';
-import { ICRUD } from '/common/generics';
-import { UserRepository } from './user.repository';
+import { IUpdateUserParams, IUserResponse } from './interfaces';
+import { PrismaService } from 'nestjs-prisma';
+import { selectUser } from '/common/helpers';
 
 @Injectable()
-export class UserService implements ICRUD<User> {
-  constructor(private readonly userRepository: UserRepository) {}
+export class UserService {
+  constructor(private readonly prismaService: PrismaService) {}
 
   // Mutation
-  async create(params: ICreateUserParams): Promise<User> {
-    const { data } = params;
-    return this.userRepository.create({ data });
+  async create(data: Prisma.UserCreateInput): Promise<IUserResponse> {
+    const user = await this.prismaService.user.create({ data });
+    delete user.password, delete user.refreshToken;
+    return user;
   }
 
-  async update(params: IUpdateUserParams): Promise<User | null> {
+  async update(params: IUpdateUserParams): Promise<IUserResponse | null> {
     const { where, data } = params;
-    return this.userRepository.update({ where, data });
+    return this.prismaService.user.update({ where, data });
   }
 
-  async delete(params: IDeleteUserParams): Promise<User | null> {
-    const { where } = params;
-    return this.userRepository.delete({ where });
+  async delete(
+    where: Prisma.UserWhereUniqueInput,
+  ): Promise<IUserResponse | null> {
+    return this.prismaService.user.delete({ where });
   }
 
   // Query
-  async list(params: IListUserParams): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.userRepository.list({ skip, take, cursor, where, orderBy });
+  async list(): Promise<IUserResponse[]> {
+    return this.prismaService.user.findMany({ select: selectUser });
   }
 
-  async get(params: IGetUserParams): Promise<User | null> {
-    const { where } = params;
-    return this.userRepository.get({ where });
+  async get(where: Prisma.UserWhereUniqueInput): Promise<IUserResponse | null> {
+    return this.prismaService.user.findUnique({ where, select: selectUser });
   }
 }

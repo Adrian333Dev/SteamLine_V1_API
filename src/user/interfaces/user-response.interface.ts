@@ -1,3 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from '@prisma/client';
 
-export interface IUserResponse extends Omit<User, "password"> {}
+export interface IUserResponse
+  extends Omit<User, 'password' | 'refreshToken'> {}
