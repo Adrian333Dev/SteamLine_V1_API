@@ -10,11 +10,14 @@ import {
   RefreshTokenIdsStorage,
 } from './authentication';
 import { AccessTokenGuard, authGuardProvider } from './authentication/guards';
+import { permissionsGuardProvider } from './authorization/guards';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   providers: [
     hashingServiceProvider,
     authGuardProvider,
+    permissionsGuardProvider,
     AuthenticationService,
     RefreshTokenIdsStorage,
     AccessTokenGuard,
@@ -22,6 +25,7 @@ import { AccessTokenGuard, authGuardProvider } from './authentication/guards';
   imports: [
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
+    CaslModule,
   ],
   controllers: [AuthenticationController],
 })
