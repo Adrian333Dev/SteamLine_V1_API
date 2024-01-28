@@ -1,0 +1,32 @@
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
+
+import { hashingServiceProvider } from './hashing';
+import { jwtConfig } from './config';
+import {
+  AuthenticationService,
+  AuthenticationController,
+  RefreshTokenIdsStorage,
+} from './authentication';
+import { AccessTokenGuard, authGuardProvider } from './authentication/guards';
+import { permissionsGuardProvider } from './authorization/guards';
+import { CaslModule } from './casl/casl.module';
+
+@Module({
+  providers: [
+    hashingServiceProvider,
+    authGuardProvider,
+    permissionsGuardProvider,
+    AuthenticationService,
+    RefreshTokenIdsStorage,
+    AccessTokenGuard,
+  ],
+  imports: [
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+    ConfigModule.forFeature(jwtConfig),
+    CaslModule,
+  ],
+  controllers: [AuthenticationController],
+})
+export class IdentityAccessManagementModule {}
