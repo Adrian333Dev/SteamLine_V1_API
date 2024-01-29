@@ -18,6 +18,10 @@ export class User extends Document {
 
   @Prop({ required: true, select: false })
   password: string;
+
+  // Refresh token will be stored here temporarily
+  @Prop({ select: false })
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

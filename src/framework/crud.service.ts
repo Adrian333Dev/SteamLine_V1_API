@@ -28,8 +28,12 @@ export abstract class CrudService<T extends Document> {
     return this.model.find().exec();
   }
 
-  async findOne(id: string, select?: string): Promise<T | null> {
+  async findOneById(id: string, select?: string): Promise<T | null> {
     return this.model.findById(id).select(select).exec();
+  }
+
+  async findOneByQuery(query: Record<string, any>): Promise<T | null> {
+    return this.model.findOne(query).exec();
   }
 
   async update<UpdateDto extends Partial<T>>(

@@ -7,35 +7,35 @@ import {
   Get,
   Query,
 } from '@nestjs/common';
-import { CreateUserDto } from './user.dtos';
+import { CreateUserDto } from './types/user.dtos';
 import { UsersService } from './users.service';
 import { PaginationQueryDto } from '/framework/dto';
+import { HashingService } from '../hashing';
 @Controller('iam/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly hashingService: HashingService,
+  ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() { password, ...dto }: CreateUserDto) {
+    const hashedPassword = await this.hashingService.hash(password);
+    return this.usersService.create({ ...dto, password: hashedPassword });
   }
 
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
+  async findAll(@Query() paginationQuery: PaginationQueryDto) {
     return this.usersService.findAll(paginationQuery);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return this.usersService.findOneById(id);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     return this.usersService.delete(id);
-  }
-
-  @Delete()
-  deleteAll() {
-    return this.usersService.deleteAll();
   }
 }
