@@ -17,8 +17,8 @@ import { IUserResponse } from '../users/types/interfaces';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
-export class AuthenticationService {
-  private readonly logger = new Logger(AuthenticationService.name);
+export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly usersService: UsersService,
     private readonly hashingService: HashingService,
@@ -29,16 +29,17 @@ export class AuthenticationService {
 
   async signUp({ password, ...dto }: SignUpInput): Promise<IUserResponse> {
     const hashedPassword = await this.hashingService.hash(password);
-    const user = await this.usersService.create({
+    let user = await this.usersService.create({
       ...dto,
       password: hashedPassword,
     });
-    delete user.password;
+    (user = user.toObject()), delete user.password, delete user.__v;
     return user;
   }
 
   async signIn({ email, password }: SignInInput): Promise<ITokens> {
-    const user = await this.usersService.findOneByQuery({ email });
+    const user = await this.usersService.findOneByQuery({ email }, '+password');
+    this.logger.log(`User: ${JSON.stringify(user)}`);
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const isPasswordValid = await this.hashingService.compare(
       password,
@@ -50,6 +51,7 @@ export class AuthenticationService {
   }
 
   async generateTokens(user: User): Promise<ITokens> {
+    this.logger.log(`Generating tokens for user ${JSON.stringify(user)}`);
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<IActiveUserData>>(
         user.id,
@@ -65,15 +67,16 @@ export class AuthenticationService {
 
   async refreshTokens(oldRefreshToken: string): Promise<ITokens> {
     try {
-      const { sub } = await this.jwtService.verifyAsync<
-        Pick<IActiveUserData, 'sub'>
-      >(oldRefreshToken, {
-        secret: this.jwtConf.secret,
-        audience: this.jwtConf.audience,
-        issuer: this.jwtConf.issuer,
-      });
+      const { sub } = await this.jwtService.verifyAsync<IActiveUserData>(
+        oldRefreshToken,
+        {
+          secret: this.jwtConf.secret,
+          audience: this.jwtConf.audience,
+          issuer: this.jwtConf.issuer,
+        },
+      );
 
-      const user = await this.usersService.findOneById(sub);
+      const user = await this.usersService.findOneById(sub, '+refreshToken');
       if (!user) throw new UnauthorizedException();
       if (user.refreshToken !== oldRefreshToken)
         throw new UnauthorizedException();
@@ -84,6 +87,7 @@ export class AuthenticationService {
   }
 
   private async signToken<T>(userId: string, expiresIn: number, payload?: T) {
+    this.logger.log(`Signing token for user ${userId} with payload ${payload}`);
     return this.jwtService.signAsync(
       { sub: userId, ...payload },
       {

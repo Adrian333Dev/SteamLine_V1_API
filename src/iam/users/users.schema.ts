@@ -2,7 +2,18 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { isEmail } from 'class-validator';
 
-@Schema()
+@Schema({
+  toJSON: {
+    transform: (_, ret) => {
+      delete ret.__v;
+    },
+  },
+  toObject: {
+    transform: (_, ret) => {
+      delete ret.__v;
+    },
+  },
+})
 export class User extends Document {
   _id: Types.ObjectId;
 
@@ -19,7 +30,6 @@ export class User extends Document {
   @Prop({ required: true, select: false })
   password: string;
 
-  // Refresh token will be stored here temporarily
   @Prop({ select: false })
   refreshToken: string;
 }

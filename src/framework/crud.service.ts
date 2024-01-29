@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Model, Types, Document } from 'mongoose';
 import { PaginationQueryDto } from './dto';
 
+// type Select<T extends Document> = {
+//   [K in keyof T as `+${string & K}` | `-${string & K}`]: T[K];
+// };
+
+type Select = string | string[] | Record<string, number | boolean | object>;
+
 @Injectable()
 export abstract class CrudService<T extends Document> {
   constructor(protected readonly model: Model<T>) {}
@@ -28,12 +34,15 @@ export abstract class CrudService<T extends Document> {
     return this.model.find().exec();
   }
 
-  async findOneById(id: string, select?: string): Promise<T | null> {
+  async findOneById(id: string, select?: Select): Promise<T | null> {
     return this.model.findById(id).select(select).exec();
   }
 
-  async findOneByQuery(query: Record<string, any>): Promise<T | null> {
-    return this.model.findOne(query).exec();
+  async findOneByQuery(
+    query: Record<string, any>,
+    select?: Select,
+  ): Promise<T | null> {
+    return this.model.findOne(query).select(select).exec();
   }
 
   async update<UpdateDto extends Partial<T>>(

@@ -12,5 +12,6 @@ import { hashingServiceProvider } from '../hashing';
   ],
   providers: [UsersService, hashingServiceProvider],
   controllers: [UsersController],
+  exports: [UsersService],
 })
 export class UsersModule {}

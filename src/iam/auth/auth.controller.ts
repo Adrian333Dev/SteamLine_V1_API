@@ -8,18 +8,18 @@ import {
   Res,
 } from '@nestjs/common';
 
-import { AuthenticationService } from './auth.service';
+import { AuthService } from './auth.service';
 import { RefreshTokensInput, SignInInput, SignUpInput } from './auth.dtos';
 import { Response } from 'express';
 import { Auth } from './decorators';
 import { AuthType } from './enums';
 
 @Auth(AuthType.None)
-@Controller('auth')
-export class AuthenticationController {
-  private readonly logger = new Logger(AuthenticationController.name);
+@Controller('iam/auth')
+export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthenticationService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('sign-up')
   async signUp(@Body() signUpDto: SignUpInput) {
@@ -28,10 +28,8 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
-  async signIn(
-    @Res({ passthrough: true }) res: Response,
-    @Body() signInDto: SignInInput,
-  ) {
+  async signIn(@Body() signInDto: SignInInput) {
+    this.logger.log('signInDto: ' + JSON.stringify(signInDto));
     const tokens = await this.authService.signIn(signInDto);
     // await this.setTokensToCookie(res, { accessToken, refreshToken });
     return tokens;
@@ -40,6 +38,7 @@ export class AuthenticationController {
   @HttpCode(HttpStatus.OK)
   @Post('refresh-tokens')
   async refreshTokens(@Body() { refreshToken }: RefreshTokensInput) {
+    this.logger.log('refreshTokensDto: ' + JSON.stringify({ refreshToken }));
     // const oldRefreshToken = res.req.cookies['refreshToken'];
     return this.authService.refreshTokens(refreshToken);
     // await this.setTokensToCookie(res, tokens);
